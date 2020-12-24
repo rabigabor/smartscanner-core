@@ -110,6 +110,18 @@ class IDPassResultActivity : AppCompatActivity() {
                 for ((key, value) in card.cardExtras) {
                     dump.append("$key: $value\n")
                 }
+                var address = card.postalAddress
+                if (address != null) {
+                    var postalCode = address.postalCode
+                    var administrativeArea = address.administrativeArea
+                    var languageCode = address.languageCode
+                    var addressLines = address.addressLinesList.joinToString(",")
+
+                    dump.append("Language Code: " + languageCode)
+                    dump.append("Postal Code: " + postalCode)
+                    dump.append("Administrative Area: " + administrativeArea)
+                    dump.append("Address: " + addressLines)
+                }
                 dump.append("\n-------------------------\n\n")
                 dump.append("Authenticated: $authStatus\n")
                 dump.append("Certificate  : $certStatus\n")
