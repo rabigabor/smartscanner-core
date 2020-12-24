@@ -90,6 +90,10 @@ class IDPassResultActivity : AppCompatActivity() {
                 val surname = card.surname
                 val dob = card.dateOfBirth
                 val pob = card.placeOfBirth
+                var uin = card.uin
+                if (uin != null) {
+                    dump.append("UIN: $uin\n")
+                }
                 if (fullName != null) {
                     dump.append("Full Name: $fullName\n")
                 }
@@ -117,10 +121,10 @@ class IDPassResultActivity : AppCompatActivity() {
                     var languageCode = address.languageCode
                     var addressLines = address.addressLinesList.joinToString(",")
 
-                    dump.append("Language Code: " + languageCode)
-                    dump.append("Postal Code: " + postalCode)
-                    dump.append("Administrative Area: " + administrativeArea)
-                    dump.append("Address: " + addressLines)
+                    dump.append("Language Code: $languageCode\n")
+                    dump.append("Postal Code: $postalCode\n")
+                    dump.append("Administrative Area: $administrativeArea\n")
+                    dump.append("Address: $addressLines\n")
                 }
                 dump.append("\n-------------------------\n\n")
                 dump.append("Authenticated: $authStatus\n")
