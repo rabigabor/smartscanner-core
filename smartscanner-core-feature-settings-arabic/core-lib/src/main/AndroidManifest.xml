@@ -1,0 +1,48 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="org.idpass.smartscanner.lib">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_LOGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+
+    <uses-feature android:name="android.hardware.nfc" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <application
+        android:hardwareAccelerated="true"
+        android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name="SmartScannerActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="nosensor"
+            android:keepScreenOn="true">
+            <intent-filter>
+                <!--Bundle intent-->
+                <action android:name="org.idpass.smartscanner.BARCODE_SCAN" />
+                <action android:name="org.idpass.smartscanner.IDPASS_LITE_SCAN" />
+                <action android:name="org.idpass.smartscanner.MRZ_SCAN" />
+                <action android:name="org.idpass.smartscanner.NFC_SCAN" />
+                <action android:name="org.idpass.smartscanner.QRCODE_SCAN" />
+                <!--ODK bundle intent-->
+                <action android:name="org.idpass.smartscanner.odk.BARCODE_SCAN" />
+                <action android:name="org.idpass.smartscanner.odk.IDPASS_LITE_SCAN" />
+                <action android:name="org.idpass.smartscanner.odk.MRZ_SCAN" />
+                <action android:name="org.idpass.smartscanner.odk.NFC_SCAN" />
+                <action android:name="org.idpass.smartscanner.odk.QRCODE_SCAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".nfc.NFCActivity"
+            android:screenOrientation="nosensor"
+            android:launchMode="singleInstance"
+            android:keepScreenOn="true"/>
+    </application>
+</manifest>
