@@ -358,13 +358,29 @@
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:orientation="vertical">
 
+                            <TextView
+                                android:layout_marginTop="8dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="end"
+                                android:padding="4dp"
+                                android:textAlignment="textStart"
+                                android:layout_gravity="start"
+                                android:text="Personal Information"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                                android:layout_marginEnd="@dimen/margin_small"
+                                />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/iconPhoto"
                                 android:layout_width="@dimen/item_photo_width"
                                 android:layout_height="@dimen/item_photo_height"
-                                android:layout_gravity="center"
+                                android:layout_gravity="start"
                                 android:layout_marginEnd="@dimen/margin_medium_small"
                                 android:contentDescription="Vehicle Owner Details"
                                 android:src="@drawable/ic_person" />
@@ -375,18 +391,6 @@
                                 android:shrinkColumns="1"
                                 android:layout_weight="1">
 
-                                <TextView
-                                    android:layout_marginTop="8dp"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="start"
-                                    android:padding="4dp"
-                                    android:textAlignment="textStart"
-                                    android:layout_gravity="start"
-                                    android:text="Personal Information"
-                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                                    android:layout_marginEnd="@dimen/margin_small"
-                                    tools:ignore="RtlCompat" />
 
                                 <TableRow
                                     android:layout_width="match_parent"
@@ -473,6 +477,7 @@
                                         android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
                                 </TableRow>
                             </TableLayout>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
 
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </TableRow>

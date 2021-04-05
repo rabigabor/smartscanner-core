@@ -19,6 +19,7 @@ package org.idpass.smartscanner.lib.nfc
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.nfc.NfcAdapter
 import android.nfc.Tag
 import android.os.Bundle
@@ -53,6 +54,7 @@ class  NFCFragment : androidx.fragment.app.Fragment() {
     private var mrzInfo: MRZInfo? = null
     private var nfcFragmentListener: NfcFragmentListener? = null
     private var textViewPassportNumber: TextView? = null
+    private var textViewNfcTitle: TextView? = null
     private var textViewDateOfBirth: TextView? = null
     private var textViewDateOfExpiry: TextView? = null
     private var progressBar: ProgressBar? = null
@@ -71,6 +73,7 @@ class  NFCFragment : androidx.fragment.app.Fragment() {
             mrzInfo = arguments?.getSerializable(IntentData.KEY_MRZ_INFO) as MRZInfo
         }
 
+        textViewNfcTitle=view.findViewById(R.id.textViewNfcTitle);
         textViewPassportNumber = view.findViewById(R.id.value_passport_number)
         textViewDateOfBirth = view.findViewById(R.id.value_DOB)
         textViewDateOfExpiry = view.findViewById(R.id.value_expiration_date)
@@ -161,10 +164,21 @@ class  NFCFragment : androidx.fragment.app.Fragment() {
 
     override fun onResume() {
         super.onResume()
-        textViewPassportNumber?.text = getString(R.string.doc_number, mrzInfo?.documentNumber)
-        textViewDateOfBirth?.text = getString(R.string.doc_dob, DateUtils.toAdjustedDate(formatStandardDate(mrzInfo?.dateOfBirth)))
-        textViewDateOfExpiry?.text = getString(R.string.doc_expiry, DateUtils.toReadableDate(formatStandardDate(mrzInfo?.dateOfExpiry)))
+        val sharedPref: SharedPreferences = context!!.getSharedPreferences(resources.getString(R.string.app_name), Context.MODE_PRIVATE)
 
+        if (sharedPref.getString("name","lll")=="en") {
+
+            textViewNfcTitle?.text="Put your phone over your passport and don't move it"
+            textViewPassportNumber?.text = getString(R.string.doc_number, mrzInfo?.documentNumber)
+            textViewDateOfBirth?.text = getString(R.string.doc_dob, DateUtils.toAdjustedDate(formatStandardDate(mrzInfo?.dateOfBirth)))
+            textViewDateOfExpiry?.text = getString(R.string.doc_expiry, DateUtils.toReadableDate(formatStandardDate(mrzInfo?.dateOfExpiry)))
+        }else{
+            textViewNfcTitle?.text="ضع هاتفك فوق جواز سفرك ولا تحركه"
+
+            textViewPassportNumber?.text =  "      رقم البطاقة : "+ mrzInfo?.documentNumber
+            textViewDateOfBirth?.text = "       تاريخ الميلاد : "+ DateUtils.toAdjustedDate(formatStandardDate(mrzInfo?.dateOfBirth))
+            textViewDateOfExpiry?.text = "       تاريخ النفاذ : " +DateUtils.toReadableDate(formatStandardDate(mrzInfo?.dateOfExpiry))
+        }
         if (nfcFragmentListener != null) {
             nfcFragmentListener?.onEnableNfc()
         }

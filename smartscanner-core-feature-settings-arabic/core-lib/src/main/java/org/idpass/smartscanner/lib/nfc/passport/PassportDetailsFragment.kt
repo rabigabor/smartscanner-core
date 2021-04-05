@@ -20,6 +20,7 @@ package org.idpass.smartscanner.lib.nfc.passport
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -105,15 +106,44 @@ class PassportDetailsFragment : androidx.fragment.app.Fragment() {
         if (personDetails != null) {
             val currentLanguage = Locale.getDefault().displayLanguage
             if (sharedPref.getString("name","lll")=="en") {
+                val locale = Locale("en")
+                Locale.setDefault(locale)
+                val config = Configuration()
+                config.locale = locale
+                activity?.resources!!.updateConfiguration(config, activity?.resources!!.displayMetrics)
+
+
                 binding.valueName.text = personDetails.secondaryIdentifier?.replace("<<", " ")?.replace("<", "") ?: "NA"
                 binding.lname.text = personDetails.primaryIdentifier?.replace("<<", " ")?.replace("<", "") ?: "NA"
             } else {
-                val full = additionalPersonDetails?.nameOfHolder?.replace("<<", " ")?.replace("<", " ")
+
+                val locale = Locale("ar")
+                Locale.setDefault(locale)
+                val config = Configuration()
+                config.locale = locale
+                activity?.resources!!.updateConfiguration(config, activity?.resources!!.displayMetrics)
+
+
+
+
+                val full =additionalPersonDetails?.nameOfHolder?.replace("<<", " ")?.replace("<", " ")
                 val parts  = full?.split(" ")?.toMutableList()
-                val firstName = parts!!.firstOrNull()
-                parts.removeAt(0)
-                binding.valueName.text = firstName+" "+parts[0]+" "+parts[1]
-                binding.lname.text = parts[2]
+
+
+
+                val lastName = parts!!.lastOrNull()
+                parts.removeAt(parts.size-1)
+                var length=parts.size;
+                var name="";
+
+                for (i in parts){//0
+                     name=name+" "+i
+
+                }
+                binding.valueName.text=name
+                binding.lname.text =lastName
+
+
             }
             binding.valueDOB.text = DateUtils.toAdjustedDate(formatStandardDate(personDetails.dateOfBirth))
             binding.valueGender.text = personDetails.gender?.name
