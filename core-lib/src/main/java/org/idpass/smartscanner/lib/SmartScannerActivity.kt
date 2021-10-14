@@ -243,6 +243,7 @@ class SmartScannerActivity : BaseActivity(), OnClickListener {
                     format = scannerOptions?.mrzFormat
                         ?: intent.getStringExtra(ScannerConstants.MRZ_FORMAT_EXTRA),
                     analyzeStart = System.currentTimeMillis(),
+                    analyzeTime = config?.analyzeTime?: 5000,
                     onConnectSuccess = {
                         if (modelText?.visibility == VISIBLE) {
                             modelText?.text = it

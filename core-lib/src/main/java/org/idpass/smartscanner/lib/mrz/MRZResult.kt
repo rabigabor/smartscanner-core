@@ -39,10 +39,11 @@ data class MRZResult(
         var mrz: String?,
         val optional: String? = null,
         val optional2: String? = null,
-        val validComposite: Boolean? = null
+        val validComposite: Boolean? = null,
+        val rawAll: String? = null
 ) {
     companion object {
-        fun formatMrzResult(record: MrzRecord, image: String? = "") : MRZResult {
+        fun formatMrzResult(record: MrzRecord, image: String? = "", rawAll: String? = "") : MRZResult {
             val dateOfBirth = DateUtils.toAdjustedDate(record.dateOfBirth?.toString()?.replace(Regex("[{}]"), ""))
             val expirationDate = DateUtils.toReadableDate(record.expirationDate?.toString()?.replace(Regex("[{}]"), ""))
             return MRZResult(
@@ -60,11 +61,12 @@ data class MRZResult(
                     sex = record.sex.toString(),
                     surname = record.surname,
                     mrz = record.toMrz(),
-                    validComposite = record.validComposite
+                    validComposite = record.validComposite,
+                    rawAll = rawAll
             )
         }
 
-        fun formatMrtdTd1Result(record: MrtdTd1, image: String?) : MRZResult {
+        fun formatMrtdTd1Result(record: MrtdTd1, image: String?, rawAll: String? = "") : MRZResult {
             val dateOfBirth = DateUtils.toAdjustedDate(record.dateOfBirth?.toString()?.replace(Regex("[{}]"), ""))
             val expirationDate = DateUtils.toReadableDate(record.expirationDate?.toString()?.replace(Regex("[{}]"), ""))
             return MRZResult(
@@ -84,7 +86,8 @@ data class MRZResult(
                     mrz = record.toMrz(),
                     optional = record.optional,
                     optional2 = record.optional2,
-                    validComposite = record.validComposite
+                    validComposite = record.validComposite,
+                    rawAll = rawAll
             )
         }
     }
