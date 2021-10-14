@@ -51,9 +51,9 @@ open class NFCScanAnalyzer(
     isMLKit: Boolean,
     format: String? = null,
     analyzeStart: Long
-) : MRZAnalyzer(activity, intent, mode, label, language, locale, withMrzPhoto, withPhoto, captureLog, enableLogging, isMLKit, imageResultType, format, analyzeStart) {
+) : MRZAnalyzer(activity, intent, mode, label, language, locale, withMrzPhoto, withPhoto, captureLog, enableLogging, isMLKit, imageResultType, format, 5000, analyzeStart) {
 
-    override fun processResult(result: String, bitmap: Bitmap, rotation: Int) {
+    override fun processResult(result: String, bitmap: Bitmap, rotation: Int, rawAll: String) {
         val mrzResult =  MRZResult.formatMrzResult(MRZCleaner.parseAndClean(result))
         mrzResult.mrz?.let { mrzString ->
             Log.d(SmartScannerActivity.TAG, "Success from NFC -- SCAN")

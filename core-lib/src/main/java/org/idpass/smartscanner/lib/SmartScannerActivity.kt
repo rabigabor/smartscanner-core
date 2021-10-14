@@ -228,7 +228,8 @@ class SmartScannerActivity : BaseActivity(), OnClickListener {
                     imageResultType = config?.imageResultType ?: ImageResultType.PATH.value,
                     format = scannerOptions?.mrzFormat
                         ?: intent.getStringExtra(ScannerConstants.MRZ_FORMAT_EXTRA),
-                    analyzeStart = System.currentTimeMillis()
+                    analyzeStart = System.currentTimeMillis(),
+                    analyzeTime = config?.analyzeTime?: 5000,
                 )
                 rectangleMRZGuide?.visibility = VISIBLE
             }

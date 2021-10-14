@@ -53,6 +53,7 @@ open class MRZAnalyzer(
     private val isMLKit: Boolean,
     private val imageResultType: String,
     private val format: String?,
+    private val analyzeTime: Int = 5000,
     private val analyzeStart: Long
 ) : BaseImageAnalyzer() {
 
@@ -80,10 +81,22 @@ open class MRZAnalyzer(
                 else -> Bitmap.createBitmap(bf, 0, bf.height / 3, bf.width, bf.height / 3)
 
             }
+            // val cropped = if (rot == 90 || rot == 270) Bitmap.createBitmap(
+            // val bf = mediaImage.toBitmap(rot, mode)
+            //val cropped = bf; // THIS!
+            /*val cropped = if (rot == 90 || rot == 270) Bitmap.createBitmap(
+                    bf,
+                    bf.width / 2,
+                    0,
+                    bf.width / 2,
+                    bf.height
+            )
+            else Bitmap.createBitmap(bf, 0, bf.height / 2, bf.width, bf.height / 2) */
             Log.d(
                 SmartScannerActivity.TAG,
                 "Bitmap: (${bf.width}, ${bf.height} Cropped: (${cropped.width}, ${cropped.height}), Rotation: $rot"
             )
+
             // Pass image to an ML Kit Vision API
             Log.d("${SmartScannerActivity.TAG}/SmartScanner", "MRZ MLKit: start")
             val start = System.currentTimeMillis()
@@ -98,37 +111,86 @@ open class MRZAnalyzer(
                         "${SmartScannerActivity.TAG}/SmartScanner",
                         "MRZ MLKit TextRecognition: success: $timeRequired ms"
                     )
-                    var rawFullRead = ""
-                    val blocks = visionText.textBlocks
+                    var rawFullRead = "";
+                    var rawAll = "";
+                    val blocks = visionText.textBlocks;
+                    var prevLine = "";
                     for (i in blocks.indices) {
                         val lines = blocks[i].lines
                         for (j in lines.indices) {
-                            if (lines[j].text.contains('<')) {
+                            Log.d("${SmartScannerActivity.TAG}/SmartScanner",
+                                " prevLine $prevLine (${prevLine != ""} && ${prevLine.contains('<')} && ${prevLine.length == lines[j].text.length})")
+                            rawAll += lines[j].text + "\n"
+                            if (lines[j].text.contains('<') ||
+                                (prevLine != "" && prevLine.contains('<') && prevLine.length == lines[j].text.length)
+                            ) {
                                 rawFullRead += lines[j].text + "\n"
                             }
+                            prevLine = lines[j].text;
                         }
                     }
                     try {
                         Log.d(
-                            "${SmartScannerActivity.TAG}/SmartScanner",
-                            "Before cleaner: [${
-                                URLEncoder.encode(rawFullRead, "UTF-8")
-                                    .replace("%3C", "<").replace("%0A", "↩")
-                            }]"
+                                "${SmartScannerActivity.TAG}/SmartScanner",
+                                "Before cleaner: [${
+                                    URLEncoder.encode(rawFullRead, "UTF-8")
+                                            .replace("%3C", "<").replace("%0A", "↩")
+                                }]"
                         )
+
+                        Log.d("${SmartScannerActivity.TAG}/SmartScanner", "Analyze time: $analyzeTime <?> ${(System.currentTimeMillis() - analyzeStart)}")
+
+                        if ((System.currentTimeMillis() - analyzeStart) > analyzeTime || format != MrzFormat.MRTD_TD1.value){
+                            Log.d(
+                                "${SmartScannerActivity.TAG}/SmartScanner",
+                                "ignoring analyzeTime (${timeRequired > analyzeTime}) or format (${format != MrzFormat.MRTD_TD1.value})"
+                            )
+                        } else {
+                            Log.d(
+                            "${SmartScannerActivity.TAG}/SmartScanner",
+                            "still in analyzeTime and format is ok! rawAll: ${rawAll}"
+                            )
+
+                            if(
+                                !rawAll.contains("Anyja", false) &&
+                                !rawAll.contains("anyja", false) &&
+                                !rawAll.contains("Mother", false) &&
+                                !rawAll.contains("mother", false)
+                            ){
+                                throw IllegalArgumentException("Could not find mother's name.")
+                            }else{
+                                Log.d(
+                                    "${SmartScannerActivity.TAG}/SmartScanner",
+                                    "Check mother's name OK"
+                                )
+                            }
+                            if(
+                                !rawAll.contains("hely", false) &&
+                                !rawAll.contains("place", false) &&
+                                !rawAll.contains("Hely", false) &&
+                                !rawAll.contains("Place", false)
+                            ){
+                                throw IllegalArgumentException("Could not find birth place.")
+                            }else{
+                                Log.d(
+                                    "${SmartScannerActivity.TAG}/SmartScanner",
+                                    "Check birth place OK"
+                                )
+                            }
+                        }
                         val cleanMRZ = MRZCleaner.clean(rawFullRead)
                         Log.d(
-                            "${SmartScannerActivity.TAG}/SmartScanner",
-                            "After cleaner = [${
-                                URLEncoder.encode(cleanMRZ, "UTF-8")
-                                    .replace("%3C", "<").replace("%0A", "↩")
-                            }]"
+                                "${SmartScannerActivity.TAG}/SmartScanner",
+                                "After cleaner = [${
+                                    URLEncoder.encode(cleanMRZ, "UTF-8")
+                                            .replace("%3C", "<").replace("%0A", "↩")
+                                }]"
                         )
-                        processResult(result = cleanMRZ, bitmap = bf, rotation = rotation)
+                        processResult(result = cleanMRZ, bitmap = bf, rotation = rotation, rawAll = rawAll)
                     } catch (e: Exception) {
                         Log.d("${SmartScannerActivity.TAG}/SmartScanner", e.toString())
                     }
-                    imageProxy.close()
+                    imageProxy.close()  
                 }
                 .addOnFailureListener { e ->
                     e.printStackTrace()
@@ -137,7 +199,7 @@ open class MRZAnalyzer(
         }
     }
 
-    internal open fun processResult(result: String, bitmap: Bitmap, rotation: Int) {
+    internal open fun processResult(result: String, bitmap: Bitmap, rotation: Int, rawAll: String) {
         val imagePath = activity.cacheImagePath()
         bitmap.cropCenter().cacheImageToLocal(
             imagePath,
@@ -147,8 +209,8 @@ open class MRZAnalyzer(
         val imageFile = File(imagePath)
         val imageString = if (imageResultType == ImageResultType.BASE_64.value) imageFile.encodeBase64() else imagePath
         val mrz = when (format) {
-            MrzFormat.MRTD_TD1.value -> MRZResult.formatMrtdTd1Result(MRZCleaner.parseAndCleanMrtdTd1(result), imageString)
-            else -> MRZResult.formatMrzResult(MRZCleaner.parseAndClean(result), imageString)
+            MrzFormat.MRTD_TD1.value -> MRZResult.formatMrtdTd1Result(MRZCleaner.parseAndCleanMrtdTd1(result), imageString, rawAll)
+            else -> MRZResult.formatMrzResult(MRZCleaner.parseAndClean(result), imageString, rawAll)
         }
         if (intent.action == ScannerConstants.IDPASS_SMARTSCANNER_MRZ_INTENT ||
             intent.action == ScannerConstants.IDPASS_SMARTSCANNER_ODK_MRZ_INTENT
