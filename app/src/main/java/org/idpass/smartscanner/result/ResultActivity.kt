@@ -28,6 +28,7 @@ import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.JsonParser
 import org.idpass.smartscanner.MainActivity.Companion.imageType
@@ -103,7 +104,7 @@ class ResultActivity : AppCompatActivity() {
         val resultObj = JsonParser.parseString(result).asJsonObject
         val validComposite = if (resultObj["validComposite"]!= null) resultObj["validComposite"].asBoolean else true
         if (!validComposite) {
-            val snackBar = Snackbar.make(binding.root, "This MRZ contains an invalid composite check digit.", Snackbar.LENGTH_INDEFINITE)
+            val snackBar = Snackbar.make(binding.root, getString(R.string.label_warning_invalid_composite_digit), Snackbar.LENGTH_INDEFINITE)
             snackBar.setAction("Dismiss") { _ -> snackBar.dismiss() }
             snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.idpass_orange))
             snackBar.show()
@@ -129,6 +130,8 @@ class ResultActivity : AppCompatActivity() {
             val imageBitmap = if (imageType == ImageResultType.PATH.value) BitmapFactory.decodeFile(image) else image.decodeBase64()
             Glide.with(this)
                 .load(imageBitmap)
+                .optionalFitCenter()
+                .apply(RequestOptions().override(800, 600))
                 .into(binding.imageResult)
             binding.imageLabel.paintFlags = binding.imageLabel.paintFlags or Paint.UNDERLINE_TEXT_FLAG
             binding.imageLabel.visibility = VISIBLE
