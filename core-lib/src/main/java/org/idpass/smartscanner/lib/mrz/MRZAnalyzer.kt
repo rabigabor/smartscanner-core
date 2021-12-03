@@ -144,12 +144,23 @@ open class MRZAnalyzer(
                                         }]"
                                 )
 
-                              Log.d("${SmartScannerActivity.TAG}/SmartScanner", "Analyze time: $analyzeTime <?> ${(System.currentTimeMillis() - analyzeStart)}")
+                                Log.d("${SmartScannerActivity.TAG}/SmartScanner", "Analyze time: $analyzeTime <?> ${(System.currentTimeMillis() - analyzeStart)}")
 
-                              if((System.currentTimeMillis() - analyzeStart) > analyzeTime || format != MrzFormat.MRTD_TD1.value){
+
+
+                                val cleanMRZ = MRZCleaner.clean(rawFullRead)
+                                Log.d(
+                                        "${SmartScannerActivity.TAG}/SmartScanner",
+                                        "After cleaner = [${
+                                            URLEncoder.encode(cleanMRZ, "UTF-8")
+                                                    .replace("%3C", "<").replace("%0A", "↩")
+                                        }]"
+                                )
+
+                                if(!cleanMRZ.startsWith("I<HUN") || (System.currentTimeMillis() - analyzeStart) > analyzeTime){
                                   Log.d(
                                     "${SmartScannerActivity.TAG}/SmartScanner",
-                                    "ignoring analyzeTime (${timeRequired > analyzeTime}) or format (${format != MrzFormat.MRTD_TD1.value})"
+                                    "ignoring analyzeTime (${(System.currentTimeMillis() - analyzeStart) > analyzeTime}) or not hun (${!cleanMRZ.startsWith("I<HUN")})"
                                   )
                                 }else{
                                   Log.d(
@@ -185,14 +196,6 @@ open class MRZAnalyzer(
                                   }
                                 }
 
-                                val cleanMRZ = MRZCleaner.clean(rawFullRead)
-                                Log.d(
-                                        "${SmartScannerActivity.TAG}/SmartScanner",
-                                        "After cleaner = [${
-                                            URLEncoder.encode(cleanMRZ, "UTF-8")
-                                                    .replace("%3C", "<").replace("%0A", "↩")
-                                        }]"
-                                )
                                 processResult(result = cleanMRZ, bitmap = bf, rotation = rotation, rawAll = rawAll)
                             } catch (e: Exception) {
                                 Log.d("${SmartScannerActivity.TAG}/SmartScanner", e.toString())
