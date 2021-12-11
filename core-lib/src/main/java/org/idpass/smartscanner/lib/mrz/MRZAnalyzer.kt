@@ -122,8 +122,6 @@ open class MRZAnalyzer(
                             for (i in blocks.indices) {
                                 val lines = blocks[i].lines
                                 for (j in lines.indices) {
-                                    Log.d("${SmartScannerActivity.TAG}/SmartScanner",
-                                      " prevLine $prevLine (${prevLine != ""} && ${prevLine.contains('<')} && ${prevLine.length == lines[j].text.length})")
                                     rawAll += lines[j].text + "\n"
                                     if (
                                       lines[j].text.contains('<') ||
