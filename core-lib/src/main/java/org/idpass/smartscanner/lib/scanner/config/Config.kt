@@ -31,7 +31,8 @@ data class Config(
     val isManualCapture: Boolean? = null,
     val header: String? = null,
     val subHeader: String? = null,
-    val label: String? = null
+    val label: String? = null,
+    val orientation: String? = null
 ) : Parcelable {
     companion object {
         val default = Config(
@@ -43,6 +44,7 @@ data class Config(
             isManualCapture = false,
             header = String.empty(),
             subHeader = String.empty(),
+            orientation = Orientation.PORTRAIT.value,
             label = String.empty()
         )
     }
