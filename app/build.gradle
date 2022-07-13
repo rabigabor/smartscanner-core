@@ -18,7 +18,7 @@ android {
 
     defaultConfig {
         applicationId "org.newlogic.smartscanner"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 32
         versionName androidGitVersion.name()
         versionCode androidGitVersion.code()
@@ -41,10 +41,10 @@ android {
             props.load(fileInputStream)
             fileInputStream.close()
 
-            storeFile = file('upload-keystore')
-            storePassword = props['STORE_PASSWORD']
-            keyAlias = props['KEY_ALIAS']
-            keyPassword = props['KEY_PASSWORD']
+            storeFile = file('keystore.jks')
+            storePassword = 'polip1967'
+            keyAlias = 'digithotel'
+            keyPassword = 'polip1967'
         }
     }
 
@@ -70,6 +70,9 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    lintOptions {
+        abortOnError false
     }
 
     packagingOptions {
