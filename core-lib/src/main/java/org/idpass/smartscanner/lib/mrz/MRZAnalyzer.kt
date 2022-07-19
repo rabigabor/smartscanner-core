@@ -87,13 +87,13 @@ open class MRZAnalyzer(
                 90, 270 -> {
                     Bitmap.createBitmap(
                         bf,
-                        bf.width / 2,
+                        bf.width / 4,
                         0,
                         bf.width / 2,
                         bf.height
                     )
                 }
-                180 -> Bitmap.createBitmap(bf, 0 , bf.height / 4, bf.width, bf.height / 4)
+                180 -> Bitmap.createBitmap(bf, 0 , bf.height / 4, bf.width, bf.height / 2)
                 else -> Bitmap.createBitmap(bf, 0 , bf.height / 3, bf.width, bf.height / 3)
 
             }
@@ -195,7 +195,7 @@ open class MRZAnalyzer(
                                   }
                                 }
 
-                                processResult(result = cleanMRZ, bitmap = bf, rotation = rotation, rawAll = rawAll)
+                                processResult(result = cleanMRZ, bitmap = cropped, rotation = rotation, rawAll = rawAll)
                             } catch (e: Exception) {
                                 Log.d("${SmartScannerActivity.TAG}/SmartScanner", e.toString())
                             }
