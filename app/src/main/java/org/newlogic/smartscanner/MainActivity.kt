@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         binding.itemBarcode.item.setOnClickListener { scanBarcode(BarcodeOptions.default) }
         binding.itemIdpassLite.item.setOnClickListener { scanIDPassLite() }
         binding.itemMrz.item.setOnClickListener { scanMRZ() }
+        binding.itemDriverLicense.item.setOnClickListener { scanDriverLicense() }
         binding.itemQr.item.setOnClickListener { scanQRCode() }
         binding.itemNfc.item.setOnClickListener { scanNFC() }
         // Change language
@@ -115,16 +116,30 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun scanMRZ() {
-        val intent = Intent(this, SmartScannerActivity::class.java)
-        intent.putExtra(
-            SmartScannerActivity.SCANNER_OPTIONS,
-            ScannerOptions(
-                mode = Modes.MRZ.value,
-                language = getLanguage(preference),
-                config = sampleConfig(isManualCapture = true, orientation = getOrientation(preference)),
-            )
+      val intent = Intent(this, SmartScannerActivity::class.java)
+      intent.putExtra(
+        SmartScannerActivity.SCANNER_OPTIONS,
+        ScannerOptions(
+          mode = Modes.MRZ.value,
+          language = getLanguage(preference),
+          config = sampleConfig(isManualCapture = true, orientation = getOrientation(preference)),
         )
-        startActivityForResult(intent, OP_SCANNER)
+      )
+      startActivityForResult(intent, OP_SCANNER)
+    }
+
+    private fun scanDriverLicense() {
+      val intent = Intent(this, SmartScannerActivity::class.java)
+      intent.putExtra(
+        SmartScannerActivity.SCANNER_OPTIONS,
+        ScannerOptions(
+          mode = Modes.MRZ.value,
+          language = getLanguage(preference),
+          config = sampleConfig(isManualCapture = true, orientation = getOrientation(preference)),
+          mrzFormat = "driver_license"
+        )
+      )
+      startActivityForResult(intent, OP_SCANNER)
     }
 
     private fun scanNFC() {
