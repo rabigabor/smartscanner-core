@@ -135,8 +135,8 @@ open class MRZAnalyzer(
                       Log.d("${SmartScannerActivity.TAG}/SmartScannerDL",
                         "DL_RECORD - $record"
                       )
-                      record.dateOfBirth  = (record.dateOfBirth?.trim('.', ',', ' ')?.replace(",", "")?.replace(".", "")?.replace(" ", ""))
-                      record.expirationDate  = (record.expirationDate?.trim('.', ',', ' ')?.replace(",", "")?.replace(".", "")?.replace(" ", ""))
+                      record.dateOfBirth  = (record.dateOfBirth?.trim('.', ',', ' ')?.replace(",", "")?.replace(".", "")?.replace(" ", "")?.replace("/", ""))
+                      record.expirationDate  = (record.expirationDate?.trim('.', ',', ' ')?.replace(",", "")?.replace(".", "")?.replace(" ", "")?.replace("/", ""))
                       if (
                         record.dateOfBirth != null && record.expirationDate != null && record.givenNames != null && record.surname != null && record.documentNumber != null &&
                           (record.dateOfBirth.toString().length == 8 || record.dateOfBirth.toString().length == 6)
