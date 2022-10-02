@@ -110,6 +110,44 @@ open class MRZAnalyzer(
             recognizer.process(image)
                 .addOnSuccessListener { visionText ->
                     val timeRequired = System.currentTimeMillis() - start
+
+                    if (format == "driver_license"){
+                      var rawAll = ""
+                      val record = DriverLicenseRecord()
+                      val blocks = visionText.textBlocks
+                      for (i in blocks.indices) {
+                        val lines = blocks[i].lines
+                        for (j in lines.indices) {
+                          val text = lines[j].text.trim()
+                          if (lines[j].confidence < 0.5) continue
+                          rawAll += text+"\n"
+
+                          for(pair in DriverLicenseCheckPairs){
+                            val prefix = pair[0]
+                            val field = pair[1]
+                            if (text.startsWith(prefix)){
+                              record[field] = text.removePrefix(prefix).trim()
+                              break
+                            }
+                          }
+                        }
+                      }
+                      Log.d("${SmartScannerActivity.TAG}/SmartScannerDL",
+                        "DL_RECORD - $record"
+                      )
+                      imageProxy.close()
+                      if (
+                        record.dateOfBirth != null &&
+                          record.expirationDate != null &&
+                          record.givenNames != null &&
+                          record.surname != null &&
+                          record.documentNumber != null
+                      ){
+                        processResult(result = "", bitmap = bf, rotation = rotation, rawAll = rawAll, dlRecord = record)
+                      }
+                      return@addOnSuccessListener
+                    }
+
                     Log.d(
                         "${SmartScannerActivity.TAG}/SmartScanner",
                         "MRZ MLKit TextRecognition: success: $timeRequired ms"
@@ -205,7 +243,7 @@ open class MRZAnalyzer(
         }
     }
 
-    internal open fun processResult(result: String, bitmap: Bitmap, rotation: Int, rawAll: String) {
+    internal open fun processResult(result: String, bitmap: Bitmap, rotation: Int, rawAll: String, dlRecord: DriverLicenseRecord? = null) {
         val imagePath = activity.cacheImagePath()
         bitmap.cropCenter().cacheImageToLocal(
             imagePath,
@@ -216,6 +254,7 @@ open class MRZAnalyzer(
         val imageString = if (imageResultType == ImageResultType.BASE_64.value) imageFile.encodeBase64() else imagePath
         val mrz = when (format) {
             MrzFormat.MRTD_TD1.value -> MRZResult.formatMrtdTd1Result(MRZCleaner.parseAndCleanMrtdTd1(result), imageString, rawAll)
+            "driver_license" -> MRZResult.formatDriverLicenseResult(dlRecord, imageString, rawAll)
             else -> MRZResult.formatMrzResult(MRZCleaner.parseAndClean(result), imageString, rawAll)
         }
         if (intent.action == ScannerConstants.IDPASS_SMARTSCANNER_MRZ_INTENT ||

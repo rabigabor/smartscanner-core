@@ -22,6 +22,51 @@ import org.idpass.smartscanner.mrz.parser.innovatrics.MrzRecord
 import org.idpass.smartscanner.mrz.parser.innovatrics.records.MrtdTd1
 
 
+val DriverLicenseCheckPairs = arrayOf(
+  arrayOf("1.", "surname"),
+  arrayOf("1,", "surname"),
+  arrayOf("2.", "givenNames"),
+  arrayOf("2,", "givenNames"),
+  arrayOf("3.", "dateOfBirth"),
+  arrayOf("3,", "dateOfBirth"),
+  arrayOf("5.", "documentNumber"),
+  arrayOf("5,", "documentNumber"),
+  arrayOf("4(b).", "expirationDate"),
+  arrayOf("4(b),", "expirationDate"),
+  arrayOf("4(b)", "expirationDate"),
+  arrayOf("4 b).", "expirationDate"),
+  arrayOf("4 b),", "expirationDate"),
+  arrayOf("4 b)", "expirationDate"),
+  arrayOf("4b).", "expirationDate"),
+  arrayOf("4b),", "expirationDate"),
+  arrayOf("4b)", "expirationDate"),
+  arrayOf("4b.", "expirationDate"),
+  arrayOf("4b,", "expirationDate"),
+  arrayOf("4b", "expirationDate"),
+)
+
+data class DriverLicenseRecord(
+  var dateOfBirth: String? = null,
+  var expirationDate: String? = null,
+  var documentNumber: String? = null,
+  var nationality: String? = "HUN",
+  var issuingCountry: String? = "HUN",
+  var surname: String? = null,
+  var givenNames: String? = null
+) {
+
+  operator fun set(field: String, value: String) {
+    when(field){
+      "dateOfBirth" -> this.dateOfBirth = value
+      "expirationDate" -> this.expirationDate = value
+      "documentNumber" -> this.documentNumber = value
+      "surname" -> this.surname = value
+      "givenNames" -> this.givenNames = value
+      else -> null
+    }
+  }
+}
+
 data class MRZResult(
         val image: String?,
         val code: String?,
@@ -89,6 +134,31 @@ data class MRZResult(
                     validComposite = record.validComposite,
                     rawAll = rawAll
             )
+        }
+
+        fun formatDriverLicenseResult(record: DriverLicenseRecord?, image: String?, rawAll: String? = ""): MRZResult {
+          val dateOfBirth = record?.dateOfBirth?.trim('.', ',', ' ')?.replace(',', '-')?.replace('.', '-')
+          val expirationDate = record?.expirationDate?.trim('.', ',', ' ')?.replace(',', '-')?.replace('.', '-')
+          return MRZResult(
+            image = image,
+            dateOfBirth = dateOfBirth,
+            documentNumber = record?.documentNumber?.replace(" ", ""),
+            expirationDate = expirationDate,
+            givenNames = record?.givenNames,
+            issuingCountry = record?.issuingCountry,
+            nationality = record?.nationality,
+            surname = record?.surname,
+            validComposite = true,
+            rawAll = rawAll,
+            code = null,
+            code1 = null,
+            code2 = null,
+            format = "driver_license",
+            mrz = null,
+            optional = null,
+            optional2 = null,
+            sex = null
+          )
         }
     }
 }

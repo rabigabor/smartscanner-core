@@ -23,6 +23,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import org.idpass.smartscanner.api.ScannerConstants
 import org.idpass.smartscanner.lib.SmartScannerActivity
+import org.idpass.smartscanner.lib.mrz.DriverLicenseRecord
 import org.idpass.smartscanner.lib.mrz.MRZAnalyzer
 import org.idpass.smartscanner.lib.mrz.MRZCleaner
 import org.idpass.smartscanner.lib.mrz.MRZResult
@@ -53,7 +54,7 @@ open class NFCScanAnalyzer(
     analyzeStart: Long
 ) : MRZAnalyzer(activity, intent, mode, label, language, locale, withMrzPhoto, withPhoto, captureLog, enableLogging, isMLKit, imageResultType, format, 5000, analyzeStart) {
 
-    override fun processResult(result: String, bitmap: Bitmap, rotation: Int, rawAll: String) {
+    override fun processResult(result: String, bitmap: Bitmap, rotation: Int, rawAll: String, dlRecord: DriverLicenseRecord?) {
         val mrzResult =  MRZResult.formatMrzResult(MRZCleaner.parseAndClean(result))
         mrzResult.mrz?.let { mrzString ->
             Log.d(SmartScannerActivity.TAG, "Success from NFC -- SCAN")
