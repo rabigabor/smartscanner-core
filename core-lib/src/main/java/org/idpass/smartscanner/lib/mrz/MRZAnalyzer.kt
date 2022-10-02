@@ -119,7 +119,7 @@ open class MRZAnalyzer(
                         val lines = blocks[i].lines
                         for (j in lines.indices) {
                           val text = lines[j].text.trim()
-                          if (lines[j].confidence < 0.5) continue
+                          // if (lines[j].confidence < 0.5) continue
                           rawAll += text+"\n"
 
                           for(pair in DriverLicenseCheckPairs){
@@ -135,16 +135,15 @@ open class MRZAnalyzer(
                       Log.d("${SmartScannerActivity.TAG}/SmartScannerDL",
                         "DL_RECORD - $record"
                       )
-                      imageProxy.close()
+                      record.dateOfBirth  = (record.dateOfBirth?.trim('.', ',', ' ')?.replace(",", "")?.replace(".", "")?.replace(" ", ""))
+                      record.expirationDate  = (record.expirationDate?.trim('.', ',', ' ')?.replace(",", "")?.replace(".", "")?.replace(" ", ""))
                       if (
-                        record.dateOfBirth != null &&
-                          record.expirationDate != null &&
-                          record.givenNames != null &&
-                          record.surname != null &&
-                          record.documentNumber != null
+                        record.dateOfBirth != null && record.expirationDate != null && record.givenNames != null && record.surname != null && record.documentNumber != null &&
+                          (record.dateOfBirth.toString().length == 8 || record.dateOfBirth.toString().length == 6)
                       ){
                         processResult(result = "", bitmap = bf, rotation = rotation, rawAll = rawAll, dlRecord = record)
                       }
+                      imageProxy.close()
                       return@addOnSuccessListener
                     }
 
@@ -234,7 +233,7 @@ open class MRZAnalyzer(
                     } catch (e: Exception) {
                         Log.d("${SmartScannerActivity.TAG}/SmartScanner", e.toString())
                     }
-                    imageProxy.close()  
+                    imageProxy.close()
                 }
                 .addOnFailureListener { e ->
                     e.printStackTrace()

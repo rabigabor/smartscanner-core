@@ -137,13 +137,11 @@ data class MRZResult(
         }
 
         fun formatDriverLicenseResult(record: DriverLicenseRecord?, image: String?, rawAll: String? = ""): MRZResult {
-          val dateOfBirth = record?.dateOfBirth?.trim('.', ',', ' ')?.replace(',', '-')?.replace('.', '-')
-          val expirationDate = record?.expirationDate?.trim('.', ',', ' ')?.replace(',', '-')?.replace('.', '-')
           return MRZResult(
             image = image,
-            dateOfBirth = dateOfBirth,
+            dateOfBirth = record?.dateOfBirth.toString(),
             documentNumber = record?.documentNumber?.replace(" ", ""),
-            expirationDate = expirationDate,
+            expirationDate = record?.expirationDate.toString(),
             givenNames = record?.givenNames,
             issuingCountry = record?.issuingCountry,
             nationality = record?.nationality,
