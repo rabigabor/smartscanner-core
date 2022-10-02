@@ -49,8 +49,8 @@ data class MRZResult(
             return MRZResult(
                     image = image,
                     code = record.code.toString(),
-                    code1 = record.code1.toShort(),
-                    code2 = record.code2.toShort(),
+                    code1 = record.code1.code.toShort(),
+                    code2 = record.code2.code.toShort(),
                     dateOfBirth = dateOfBirth,
                     documentNumber = record.documentNumber.toString(),
                     expirationDate = expirationDate,
@@ -72,8 +72,8 @@ data class MRZResult(
             return MRZResult(
                     image = image,
                     code = record.code.toString(),
-                    code1 = record.code1.toShort(),
-                    code2 = record.code2.toShort(),
+                    code1 = record.code1.code.toShort(),
+                    code2 = record.code2.code.toShort(),
                     dateOfBirth = dateOfBirth,
                     documentNumber = record.documentNumber.toString(),
                     expirationDate = expirationDate,
